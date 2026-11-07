@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.respectbarristerk-tech/keiri-files-mcp",
+  "title": "Keiri Files (Japanese receipt filer)",
+  "description": "Local-only MCP: rename Japanese receipts/invoices by rule and append a bookkeeping CSV ledger.",
+  "repository": {
+    "url": "https://github.com/respectbarristerk-tech/keiri-files-mcp",
+    "source": "github"
+  },
+  "version": "0.3.1",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/respectbarristerk-tech/keiri-files-mcp/releases/download/v0.3.1/keiri-files-mcp-0.3.1.mcpb",
+      "fileSha256": "dce57167505df3f49da6485b098dd30af31bbf977a7a8a7b688165aff553435b",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
