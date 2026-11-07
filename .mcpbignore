@@ -1,0 +1,39 @@
+# 先頭の / はこのフォルダ直下だけを指す（依存パッケージ内の src/・test/ などは除外しない）
+# 通常は npm run pack（scripts/pack-mcpb.mjs）を使う。そちらは一時フォルダで本番用の依存だけを入れて pack する
+/src/
+/test/
+/scripts/
+/.tools/
+/qa_tmp/
+/qa_tmp2/
+/tsconfig.json
+*.mcpb
+/.gitignore
+node_modules/.bin/
+node_modules/.package-lock.json
+# 開発用の依存（その場で mcpb pack した場合にも入らないように）
+node_modules/typescript/
+node_modules/@types/
+node_modules/undici-types/
+node_modules/@anthropic-ai/mcpb/
+node_modules/pdfkit/
+node_modules/pureimage/
+node_modules/pngjs/
+node_modules/jpeg-js/
+node_modules/fontkit/
+node_modules/opentype.js/
+node_modules/@swc/
+node_modules/linebreak/
+node_modules/png-js/
+node_modules/crypto-js/
+node_modules/jpeg-exif/
+node_modules/base64-js/
+node_modules/brotli/
+node_modules/browserify-zlib/
+node_modules/clone/
+node_modules/dfa/
+node_modules/pako/
+node_modules/restructure/
+node_modules/tiny-inflate/
+node_modules/unicode-properties/
+node_modules/unicode-trie/
