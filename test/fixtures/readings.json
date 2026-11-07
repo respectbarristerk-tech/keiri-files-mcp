@@ -1,0 +1,12 @@
+[
+  { "path": "invoice_001.pdf", "date": "2026-10-01", "vendor": "架空商事テスト株式会社", "amount": 55000, "doc_type": "請求書", "invoice_no": "T0000000000001" },
+  { "path": "invoice_002.pdf", "date": "2026-10-05", "vendor": "ダミーデザイン工房", "amount": "33,000", "doc_type": "請求書", "invoice_no": "T0000000000002" },
+  { "path": "見積書 サンプル.pdf", "date": "2026-10-07", "vendor": "架空商事テスト株式会社", "amount": 110000, "doc_type": "見積書" },
+  { "path": "納品書_003.pdf", "date": "2026-10-09", "vendor": "サンプル部品店", "amount": 8800, "doc_type": "納品書" },
+  { "path": "IMG_0001.jpg", "date": "2026-10-10", "vendor": "テスト文具店", "amount": 1320, "doc_type": "領収書", "invoice_no": "T0000000000003" },
+  { "path": "IMG_0002.JPG", "date": "2026-10-10", "vendor": "テスト文具店", "amount": 1320, "doc_type": "領収書", "invoice_no": "T0000000000003" },
+  { "path": "レシート 003.png", "date": "2026-10-12", "vendor": "架空カフェ 試験店", "amount": 980, "doc_type": "領収書" },
+  { "path": "scan_004.png", "date": "2026-10-15", "vendor": "見本交通（架空）", "amount": 2400, "doc_type": "領収書" },
+  { "path": "receipt_005.jpg", "date": "2026-10-20", "vendor": "Fictional Books/Test", "amount": 3300, "doc_type": "領収書", "invoice_no": "T0000000000004" },
+  { "path": "receipt_006.jpeg", "date": "2026-10-25", "vendor": "架空通信サービス", "amount": 5500, "doc_type": "その他" }
+]

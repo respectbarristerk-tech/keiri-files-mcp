@@ -1,0 +1,88 @@
+{
+  "manifest_version": "0.3",
+  "name": "keiri-files-mcp",
+  "display_name": "経理ファイル整理（keiri-files-mcp）",
+  "version": "0.3.1",
+  "description": "レシート・請求書ファイルの命名整理と台帳CSV追記を行うローカルMCPサーバー。証憑の中身をAIに渡す読み取りツール付き。OCRなし・外部通信なし・削除なし。",
+  "long_description": "PC内のレシート・請求書（PDF/画像）を、利用者のAIが読み取った内容をもとに、規則的なファイル名へコピー（またはリネーム）し、台帳CSV（Excelで開ける）へ追記・検索します。許可したフォルダの外は読み書きしません。ファイル名と一覧表を整える補助であり、電子帳簿保存法の要件を満たすことは保証しません。税務判断はしません。",
+  "author": {
+    "name": "respectbarristerk-tech",
+    "url": "https://github.com/respectbarristerk-tech"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/respectbarristerk-tech/keiri-files-mcp.git"
+  },
+  "homepage": "https://github.com/respectbarristerk-tech/keiri-files-mcp",
+  "support": "https://github.com/respectbarristerk-tech/keiri-files-mcp/issues",
+  "license": "MIT",
+  "privacy_policies": [
+    "https://github.com/respectbarristerk-tech/keiri-files-mcp/blob/main/PRIVACY.md"
+  ],
+  "keywords": [
+    "経理",
+    "レシート",
+    "請求書",
+    "台帳",
+    "CSV",
+    "receipt",
+    "invoice",
+    "ledger"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/dist/index.js",
+        "${user_config.allowed_directories}"
+      ]
+    }
+  },
+  "tools": [
+    {
+      "name": "scan_folder",
+      "description": "許可フォルダ内の証憑ファイル（PDF/JPG/PNG/HEIC）を一覧（読み取りのみ）"
+    },
+    {
+      "name": "read_file",
+      "description": "証憑ファイル1件の中身を返す（JPG/PNGは画像、PDFは埋め込みテキスト。読み取りのみ。HEIC非対応）"
+    },
+    {
+      "name": "propose_names",
+      "description": "日付・取引先・金額・書類種別から命名案と形式エラー、重複の可能性の警告を返す（変更なし）"
+    },
+    {
+      "name": "apply_renames",
+      "description": "承認済みの命名案を実行（既定はコピー、上書きなし、ログ記録）"
+    },
+    {
+      "name": "ledger_append",
+      "description": "台帳CSVへ追記（二重登録・実在しない証憑ファイル・見積書（既定）は警告して追記しない。日付・取引先・金額が同じ行と納品書は警告つきで追記）"
+    },
+    {
+      "name": "search_ledger",
+      "description": "台帳を日付・金額・取引先で検索"
+    }
+  ],
+  "user_config": {
+    "allowed_directories": {
+      "type": "directory",
+      "title": "許可フォルダ",
+      "description": "レシート・請求書を置くフォルダ。ツールはこの配下だけを読み書きします（1つ目のフォルダに「整理済み」フォルダと台帳を作ります）。",
+      "required": true,
+      "multiple": true
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "win32",
+      "darwin",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=20.0.0"
+    }
+  }
+}

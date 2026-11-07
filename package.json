@@ -1,0 +1,41 @@
+{
+  "name": "keiri-files-mcp",
+  "version": "0.3.1",
+  "description": "レシート・請求書ファイルの命名整理と台帳CSV追記を行うローカルMCPサーバー（OCRなし・外部通信なし・削除なし）",
+  "license": "MIT",
+  "author": "respectbarristerk-tech (https://github.com/respectbarristerk-tech)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/respectbarristerk-tech/keiri-files-mcp.git"
+  },
+  "homepage": "https://github.com/respectbarristerk-tech/keiri-files-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/respectbarristerk-tech/keiri-files-mcp/issues"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "keiri-files-mcp": "dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test test/unit.test.mjs test/e2e.test.mjs test/v02.unit.test.mjs test/v02.e2e.test.mjs test/v03.test.mjs test/v031.test.mjs",
+    "pack": "node scripts/pack-mcpb.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@anthropic-ai/mcpb": "2.1.2",
+    "@types/node": "^22.20.5",
+    "jpeg-js": "^0.4.4",
+    "pdfkit": "^0.17.2",
+    "pngjs": "^7.0.0",
+    "pureimage": "^0.4.20",
+    "typescript": "^5.9.3"
+  }
+}
