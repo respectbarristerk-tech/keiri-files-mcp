@@ -375,3 +375,96 @@ export function extractPdfText(buf: Buffer, maxChars = 50000): string {
     .split("\n").map((l) => l.replace(/[ \t]+/g, " ").trim()).filter(Boolean).join("\n")
     .slice(0, maxChars);
 }
+
+// ---------- v0.4: 文字のないPDF（スキャン）から埋め込み JPEG を取り出す ----------
+/** 取り出す画像の最小の大きさ（ロゴなどの小さい画像は除く） */
+const MIN_IMAGE_SIDE = 200;
+export const MAX_PDF_IMAGES = 10;
+
+function isDctImage(o: PdfObj | undefined): boolean {
+  if (!o?.stream || !/\/Subtype\s*\/Image\b/.test(o.dict)) return false;
+  const f = /\/Filter\s*(\[[^\]]*\]|\/[A-Za-z0-9]+)/.exec(o.dict);
+  if (!f) return false;
+  const filters = f[1].match(/\/[A-Za-z0-9]+/g) ?? [];
+  return filters.length === 1 && (filters[0] === "/DCTDecode" || filters[0] === "/DCT");
+}
+
+function jpegBytes(o: PdfObj): Buffer | undefined {
+  const s = o.stream!;
+  if (s.length < 4 || s[0] !== 0xff || s[1] !== 0xd8) return undefined;
+  // /Length が間接参照のときは endstream の手前まで取っているので、最後の EOI（FFD9）までに切る
+  let end = s.length;
+  for (let i = s.length - 2; i > 2 && i > s.length - 64; i--) {
+    if (s[i] === 0xff && s[i + 1] === 0xd9) { end = i + 2; break; }
+  }
+  return s.subarray(0, end);
+}
+
+/**
+ * PDF の中の JPEG（DCTDecode）画像を、ページの順に取り出す（外部コマンドなし。中身はそのまま切り出すだけ）。
+ * 暗号化PDF・JPEG 以外の画像（Flate・JBIG2 等）は対象外。見つからなければ空配列
+ */
+export function extractPdfJpegs(buf: Buffer, max = MAX_PDF_IMAGES): Buffer[] {
+  if (!buf.subarray(0, 1024).toString("latin1").includes("%PDF")) return [];
+  const s = buf.toString("latin1");
+  if (/\/Encrypt\s+\d+\s+\d+\s+R/.test(s) || /\/Encrypt\s*<</.test(s)) return [];
+  const objs = parseObjects(buf);
+  const big = (n: number) => {
+    const o = objs.get(n);
+    if (!isDctImage(o)) return false;
+    const w = Number(/\/Width\s+(\d+)/.exec(o!.dict)?.[1] ?? 0);
+    const h = Number(/\/Height\s+(\d+)/.exec(o!.dict)?.[1] ?? 0);
+    return w >= MIN_IMAGE_SIDE || h >= MIN_IMAGE_SIDE;
+  };
+  // ページの順（Catalog → Pages → Kids）に、各ページの XObject の画像を集める
+  const order: number[] = [];
+  const seenPages = new Set<number>();
+  const dictOf = (body: string, key: string): string | undefined => {
+    const r = ref(body, key);
+    if (r !== undefined) return objs.get(r)?.dict;
+    const i = body.search(new RegExp(`/${key}\\s*<<`));
+    if (i < 0) return undefined;
+    // 入れ子の << >> を数えて切り出す
+    let depth = 0;
+    const start = body.indexOf("<<", i);
+    for (let j = start; j < body.length - 1; j++) {
+      if (body[j] === "<" && body[j + 1] === "<") { depth++; j++; }
+      else if (body[j] === ">" && body[j + 1] === ">") { depth--; j++; if (depth === 0) return body.slice(start, j + 1); }
+    }
+    return undefined;
+  };
+  const visit = (n: number, depth: number) => {
+    if (depth > 20 || seenPages.has(n)) return;
+    seenPages.add(n);
+    const o = objs.get(n);
+    if (!o) return;
+    if (/\/Type\s*\/Pages\b/.test(o.dict)) {
+      const kids = /\/Kids\s*\[([^\]]*)\]/.exec(o.dict)?.[1] ?? "";
+      for (const k of kids.matchAll(/(\d+)\s+\d+\s+R/g)) visit(Number(k[1]), depth + 1);
+      return;
+    }
+    const res = dictOf(o.dict, "Resources");
+    const xo = res ? dictOf(res, "XObject") : undefined;
+    if (!xo) return;
+    for (const m of xo.matchAll(/\/[^\s/<>\[\]()]+\s+(\d+)\s+\d+\s+R/g)) {
+      const num = Number(m[1]);
+      if (big(num) && !order.includes(num)) order.push(num);
+    }
+  };
+  for (const o of objs.values()) {
+    if (!/\/Type\s*\/Catalog\b/.test(o.dict)) continue;
+    const pages = ref(o.dict, "Pages");
+    if (pages !== undefined) visit(pages, 0);
+  }
+  // ページの木をたどれなかったときは、オブジェクト番号の順
+  if (order.length === 0) {
+    for (const n of [...objs.keys()].sort((a, b) => a - b)) if (big(n)) order.push(n);
+  }
+  const out: Buffer[] = [];
+  for (const n of order) {
+    const b = jpegBytes(objs.get(n)!);
+    if (b) out.push(b);
+    if (out.length >= max) break;
+  }
+  return out;
+}

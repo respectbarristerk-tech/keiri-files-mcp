@@ -7,7 +7,7 @@ import type { Config } from "./config.js";
 import { OUT_DIR_NAME } from "./config.js";
 import { KeiriError, displayPath, isInside, resolveSafe } from "./pathguard.js";
 import { appendRows, readCsv } from "./csv.js";
-import { EXTS, avoidReserved, checkAmount, checkDate, checkDocType, checkInvoiceNo, sanitizePart } from "./validate.js";
+import { EXTS, avoidReserved, checkAmount, checkDate, checkDocType, checkInvoiceNo, looksLikeCardNumber, sanitizePart } from "./validate.js";
 
 export const SCAN_LIMIT = 500;
 export const SEARCH_LIMIT = 200;
@@ -356,6 +356,8 @@ export function ledgerAppend(cfg: Config, entries: LedgerInput[], opts: { includ
       if (r.error || r.value! > 100) errs.push("事業割合は0〜100の整数で指定してください");
       else ratio = formatRatio(r.value!);
     }
+    const textCols = [vendor, file, text(e?.account, 50), text(e?.description), text(e?.payment_method, 50), text(e?.source_file, 255)];
+    if (textCols.some(looksLikeCardNumber)) errs.push("カード番号・口座番号らしきもの（下4桁を含む）が入っています。台帳には書かないでください（その部分を除いてから追記してください）");
     if (errs.length) {
       errors.push({ index, file_name: file, errors: errs });
       return;

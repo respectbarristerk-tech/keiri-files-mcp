@@ -52,7 +52,10 @@ after(async () => {
 test("ツール一覧と annotations", async () => {
   const { tools } = await client.listTools();
   const by = Object.fromEntries(tools.map((t) => [t.name, t]));
-  assert.deepEqual(Object.keys(by).sort(), ["apply_renames", "ledger_append", "propose_names", "read_file", "scan_folder", "search_ledger"]);
+  assert.deepEqual(Object.keys(by).sort(), [
+    "answers_read", "apply_renames", "export_freee", "ledger_append", "notify_setup_text", "pending_add", "pending_list",
+    "pending_resolve", "propose_names", "question_write", "read_file", "scan_folder", "search_ledger",
+  ]); // v0.4 で確認待ち・Muse・freee の7件を追加
   assert.equal(by.read_file.annotations.readOnlyHint, true);
   assert.equal(by.read_file.annotations.destructiveHint, false);
   assert.equal(by.scan_folder.annotations.readOnlyHint, true);

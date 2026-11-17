@@ -60,3 +60,29 @@ const RESERVED = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..*)?$/i;
 export function avoidReserved(part: string): string {
   return RESERVED.test(part.trim()) ? "_" + part : part;
 }
+
+// ---------- カード番号らしきもの（v0.4.1 で validate.ts へ移し、表記ゆれを追加） ----------
+// 台帳・確認待ち・質問ファイル・回答に書かない。金額・日付・電話番号・登録番号（T+13桁）は誤検出しない。
+const CARD_SEP = "[\\s\\-./]";
+const CARD_DIGITS = new RegExp(`(?<!\\d)\\d{4}${CARD_SEP}?\\d{4}${CARD_SEP}?\\d{4}${CARD_SEP}?\\d{2,4}`, "g");
+const CARD_PATTERNS = [
+  /[*xX×●•]{3,}[\s\-./]?\d{3,4}/, // ****1234・xxxx-1234
+  /(下|末尾|最後の?)\s*(4|四)\s*(桁|ケタ|けた)/, // 下4桁・下四桁・末尾4桁
+  /(末尾|最後)[はがの:\s]*\d{4}(?![\d円,.\-/年月日])/, // 末尾1234・最後は1234
+  /カード\s*(番号|No\.?|#)[^\d]{0,12}\d{4}(?![\d円,.\-/年月日])/i, // カード番号の最後は1234
+  /card\s*(ending|no\.?|number|#)(\s*in)?[\s:#.]*\d{4}(?!\d)/i, // card ending 1234
+  /last\s*(4|four)\s*digits?/i,
+];
+/** 区切りのない数字の先頭8桁が YYYYMMDD の日付なら、撮影日時などの連番とみなす（19xx/20xx で始まるカード番号はない） */
+function isDateStamp(m: string): boolean {
+  if (!/^\d+$/.test(m)) return false;
+  const y = Number(m.slice(0, 4)), mo = Number(m.slice(4, 6)), d = Number(m.slice(6, 8));
+  if (y < 1900 || y > 2099) return false;
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  return dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d;
+}
+export function looksLikeCardNumber(s: string): boolean {
+  const t = String(s ?? "").normalize("NFKC");
+  for (const m of t.matchAll(CARD_DIGITS)) if (!isDateStamp(m[0])) return true;
+  return CARD_PATTERNS.some((re) => re.test(t));
+}

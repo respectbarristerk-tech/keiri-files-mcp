@@ -2,9 +2,9 @@
   "manifest_version": "0.3",
   "name": "keiri-files-mcp",
   "display_name": "経理ファイル整理（keiri-files-mcp）",
-  "version": "0.3.1",
-  "description": "レシート・請求書ファイルの命名整理と台帳CSV追記を行うローカルMCPサーバー。証憑の中身をAIに渡す読み取りツール付き。OCRなし・外部通信なし・削除なし。",
-  "long_description": "PC内のレシート・請求書（PDF/画像）を、利用者のAIが読み取った内容をもとに、規則的なファイル名へコピー（またはリネーム）し、台帳CSV（Excelで開ける）へ追記・検索します。許可したフォルダの外は読み書きしません。ファイル名と一覧表を整える補助であり、電子帳簿保存法の要件を満たすことは保証しません。税務判断はしません。",
+  "version": "0.4.1",
+  "description": "レシート・請求書ファイルの命名整理と台帳CSV追記を行うローカルMCPサーバー。証憑の中身をAIに渡す読み取りツール（写真の向き直し・縮小・縦長の分割、スキャンPDF対応）と、確認待ち・Muse への質問ファイル・freee 用CSVの出力付き。OCRなし・外部通信なし・削除なし。",
+  "long_description": "PC内のレシート・請求書（PDF/画像）を、利用者のAIが読み取った内容をもとに、規則的なファイル名へコピー（またはリネーム）し、台帳CSV（Excelで開ける）へ追記・検索します。読めない・迷うものは推測で確定せず「確認待ち」に記録し、利用者がその場にいないときは Muse（パーソナルAI）が読む質問ファイルを書きます。freee の取引インポート用CSVも作れます（登録はしません）。許可したフォルダの外は読み書きしません。ファイル名と一覧表を整える補助であり、電子帳簿保存法の要件を満たすことは保証しません。税務判断はしません。",
   "author": {
     "name": "respectbarristerk-tech",
     "url": "https://github.com/respectbarristerk-tech"
@@ -47,7 +47,7 @@
     },
     {
       "name": "read_file",
-      "description": "証憑ファイル1件の中身を返す（JPG/PNGは画像、PDFは埋め込みテキスト。読み取りのみ。HEIC非対応）"
+      "description": "証憑ファイル1件の中身を返す（JPG/PNG・文字のないスキャンPDFは向きを直し縮めた画像、縦長は重ねて分割。文字のあるPDFは埋め込みテキスト。読み取りのみ。HEIC非対応）"
     },
     {
       "name": "propose_names",
@@ -64,6 +64,34 @@
     {
       "name": "search_ledger",
       "description": "台帳を日付・金額・取引先で検索"
+    },
+    {
+      "name": "pending_add",
+      "description": "読めない・迷うレシートを台帳に入れず確認待ちに記録（撮り直しの案内、医療関係は名前を伏せて画像を移す）"
+    },
+    {
+      "name": "pending_list",
+      "description": "確認待ちの一覧。通知用には古い順に5件まで・7日以上の注意・14日以上は月曜だけで絞る（読み取りのみ）"
+    },
+    {
+      "name": "pending_resolve",
+      "description": "利用者の回答を確認待ちに反映（確定・私用・重複・対象外・聞き直しは _2 まで・チャットで確認）"
+    },
+    {
+      "name": "question_write",
+      "description": "確認待ちを Muse が読む質問ファイル（question_*.txt）にして連絡用フォルダへ書く"
+    },
+    {
+      "name": "answers_read",
+      "description": "Muse が保存した回答ファイル（answer_*.txt）を読み、反映すべきかを返す（読み取りのみ）"
+    },
+    {
+      "name": "notify_setup_text",
+      "description": "Muse に貼り付ける設定文、または Claude の Gmail 連携で知らせる手順の案内を返す（メールは送らない）"
+    },
+    {
+      "name": "export_freee",
+      "description": "台帳から freee の取引インポート（支出）用CSVを作る。判断が要る行は要確認CSVへ。freee への登録はしない"
     }
   ],
   "user_config": {
