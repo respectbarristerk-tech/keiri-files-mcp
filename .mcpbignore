@@ -18,8 +18,6 @@ node_modules/undici-types/
 node_modules/@anthropic-ai/mcpb/
 node_modules/pdfkit/
 node_modules/pureimage/
-node_modules/pngjs/
-node_modules/jpeg-js/
 node_modules/fontkit/
 node_modules/opentype.js/
 node_modules/@swc/
