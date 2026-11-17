@@ -4,3 +4,5 @@ dist/
 *.mcpb
 qa_tmp/
 qa_tmp2/
+test/fixtures/v04/big_photo.jpg
+.env
