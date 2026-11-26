@@ -7,12 +7,12 @@
     "url": "https://github.com/respectbarristerk-tech/keiri-files-mcp",
     "source": "github"
   },
-  "version": "0.4.1",
+  "version": "0.4.2",
   "packages": [
     {
       "registryType": "mcpb",
-      "identifier": "https://github.com/respectbarristerk-tech/keiri-files-mcp/releases/download/v0.4.1/keiri-files-mcp-0.4.1.mcpb",
-      "fileSha256": "1fc2c14ac12548078929814e4106ce59efb39f4c13e5c0c06a09e570f9611342",
+      "identifier": "https://github.com/respectbarristerk-tech/keiri-files-mcp/releases/download/v0.4.2/keiri-files-mcp-0.4.2.mcpb",
+      "fileSha256": "154185f2b0e770fae9904ffd7b6157c18ba984b346d5a1c2c4108967f668cb57",
       "transport": {
         "type": "stdio"
       }
