@@ -159,6 +159,8 @@ export function pendingAdd(cfg: Config, items: PendingInput[]) {
       else amount = String(a.value);
     }
     const texts = [clean(it?.question, 500), clean(it?.vendor, 60), clean(it?.read_range, 300), clean(it?.candidate, 300)];
+    // 医療関係の行は検査しない: 支払先・候補・読めた範囲・質問文は記録せず（下の medical 分岐）、確認事項は固定の文になるため。
+    // v0.4.2 で意図どおりであることをテスト（v042.test.mjs）と dev_notes で明記した
     if (!medical && texts.some(looksLikeCardNumber)) {
       errs.push("カード番号・口座番号らしきもの（下4桁を含む）が入っています。確認待ち・質問ファイルには書かないでください");
     }

@@ -1,6 +1,6 @@
 {
   "name": "keiri-files-mcp",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "レシート・請求書ファイルの命名整理と台帳CSV追記、確認待ちと Muse への質問ファイル、freee 用CSVの出力を行うローカルMCPサーバー（OCRなし・外部通信なし・削除なし）",
   "license": "MIT",
   "author": "respectbarristerk-tech (https://github.com/respectbarristerk-tech)",
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "node --test test/unit.test.mjs test/e2e.test.mjs test/v02.unit.test.mjs test/v02.e2e.test.mjs test/v03.test.mjs test/v031.test.mjs test/v04.test.mjs test/v041.test.mjs",
+    "test": "node --test test/unit.test.mjs test/e2e.test.mjs test/v02.unit.test.mjs test/v02.e2e.test.mjs test/v03.test.mjs test/v031.test.mjs test/v04.test.mjs test/v041.test.mjs test/v042.test.mjs",
     "pack": "node scripts/pack-mcpb.mjs"
   },
   "dependencies": {

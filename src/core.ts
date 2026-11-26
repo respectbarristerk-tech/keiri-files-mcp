@@ -323,6 +323,8 @@ function evidenceExists(cfg: Config, outReal: string, file: string, logRows: str
   return false;
 }
 
+const LEDGER_INPUT_KEYS = new Set(["date", "vendor", "amount", "doc_type", "file_name", "account", "description", "payment_method", "invoice_no", "business_ratio", "source_file"]);
+
 export function ledgerAppend(cfg: Config, entries: LedgerInput[], opts: { include_quotes?: boolean } = {}) {
   const includeQuotes = opts.include_quotes === true;
   if (!Array.isArray(entries) || entries.length === 0) throw new KeiriError("entries が空です。1件以上指定してください。");
@@ -340,6 +342,11 @@ export function ledgerAppend(cfg: Config, entries: LedgerInput[], opts: { includ
   const reqDup = new Map<string, string>();
   entries.forEach((e, index) => {
     const errs: string[] = [];
+    // v0.4.2: 知らない列名は台帳に書かれず、カード番号の検査もされないため、無視したことを知らせる
+    const unknown = e && typeof e === "object" ? Object.keys(e).filter((k) => !LEDGER_INPUT_KEYS.has(k)) : [];
+    if (unknown.length) {
+      warnings.push({ index, file_name: text(e?.file_name, 255), warning: `知らない列名を無視しました（台帳には書いていません）: ${unknown.slice(0, 10).join(", ")}。使える列名: ${[...LEDGER_INPUT_KEYS].join(", ")}（内容は description）` });
+    }
     const d = checkDate(e?.date);
     const a = checkAmount(e?.amount);
     const t = checkDocType(e?.doc_type);

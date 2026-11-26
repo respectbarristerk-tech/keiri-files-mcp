@@ -8,7 +8,7 @@ import { readFile } from "./readfile.js";
 import { REASONS, RESOLVE_STATES, answersRead, notifySetupText, pendingAdd, pendingList, pendingResolve, questionWrite } from "./pending.js";
 import { exportFreee } from "./freee.js";
 
-export const VERSION = "0.4.1";
+export const VERSION = "0.4.2";
 const DISCLAIMER = "このツールはファイル名と一覧表を整える補助です。電子帳簿保存法の要件を満たすことは保証しません。税務判断はしません。";
 const strOrNum = z.union([z.string(), z.number()]);
 
@@ -125,7 +125,7 @@ export function createServer(cfg: Config): McpServer {
             invoice_no: z.string().optional().describe("登録番号 T+13桁（任意）"),
             business_ratio: strOrNum.optional().describe("事業割合 0〜100（任意。台帳には「50%」の形で書く）"),
             source_file: z.string().optional().describe("元ファイルの相対パス（任意）"),
-          }),
+          }).passthrough(), // v0.4.2: 知らない列名（content など）を warnings で知らせるため受け取る（台帳には書かない）
         ),
         include_quotes: z.boolean().optional().describe("見積書の行も追記するか（既定 false。見積書は支払いの記録ではないため、利用者が望んだときだけ true）"),
       },
